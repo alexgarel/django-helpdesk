@@ -19,10 +19,13 @@ import re
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.Utils import parseaddr, collapse_rfc2231_value
+from email.mime.message import MIMEMessage
+from email.feedparser import FeedParser
 from optparse import make_option
 
 from django.core.files.base import ContentFile
 from django.core.management.base import BaseCommand
+from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 
@@ -156,6 +159,21 @@ def ticket_from_message(message, queue, quiet):
 
     for ignore in IgnoreEmail.objects.filter(Q(queues=queue) | Q(queues__isnull=True)):
         if ignore.test(sender_email):
+            if ignore.forward_new_cc:
+                # forward to new cc
+                fw = EmailMessage(subject='Fw: ' + subject,
+                                  to=[m.strip()
+                                      for m in queue.new_ticket_cc.split(',')],
+                                  from_email=queue.from_address,
+                                  body='see attached message.')
+                parser = FeedParser()
+                parser.feed(msg)
+                attachment = MIMEMessage(parser.close())
+                fw.attach(attachment)
+                #~ fw.attach(filename='%s.eml' % mail_subject,
+                       #~ content=msg,
+                       #~ mimetype='message/rfc822; name="%s.eml"' % mail_subject)
+                fw.send(fail_silently=True)
             if ignore.keep_in_mailbox:
                 # By returning 'False' the message will be kept in the mailbox,
                 # and the 'True' will cause the message to be deleted.

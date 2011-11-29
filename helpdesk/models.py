@@ -1021,6 +1021,14 @@ class IgnoreEmail(models.Model):
             'be deleted.'),
         )
 
+    forward_new_cc = models.BooleanField(
+        _('Do forward to queue watchers?'),
+        blank=True,
+        default=False,
+        help_text=_('Do you want to forward emails from this address to emails'
+                    'registered as watching for incoming tickets?'),
+        )
+
     def __unicode__(self):
         return u'%s' % self.name
 
