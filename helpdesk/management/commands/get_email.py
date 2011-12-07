@@ -278,9 +278,6 @@ def ticket_from_message(message, queue, quiet):
     
     f.save()
 
-    if not quiet:
-        print (" [%s-%s] %s%s" % (t.queue.slug, t.id, t.title, update)).encode('ascii', 'replace')
-
     for file in files:
         if file['content']:
             filename = file['filename'].encode('ascii', 'replace').replace(' ', '_')
@@ -354,6 +351,9 @@ def ticket_from_message(message, queue, quiet):
                 sender=queue.from_address,
                 fail_silently=True,
                 )
+
+    if not quiet:
+        print (" [%s-%s] %s%s" % (t.queue.slug, t.id, t.title, update)).encode('ascii', 'replace')
 
     return t
 
