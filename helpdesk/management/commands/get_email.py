@@ -142,6 +142,17 @@ def decode_mail_headers(string):
     decoded = decode_header(string)
     return u' '.join([unicode(msg, charset or 'utf-8') for msg, charset in decoded])
 
+BODY_SPLITTER = re.compile(r'</?body(?= |>)')
+
+def head_body_rest(html):
+    splitted = BODY_SPLITTER.split(html)
+    if len(splitted) == 1:
+        return '', splitted, ''
+    elif len(splitted) == 2:
+        return splitted[0], splitte[1], ''
+    else:
+        return splitted
+
 def ticket_from_message(message, queue, quiet):
     # 'message' must be an RFC822 formatted message.
     msg = message
@@ -198,11 +209,19 @@ def ticket_from_message(message, queue, quiet):
         if name:
             name = collapse_rfc2231_value(name)
 
-        if part.get_content_maintype() == 'text' and name == None:
+        if (part.get_content_maintype() == 'text' and name == None and
+                            part.get_content_subtype() in ('plain', 'html')):
             if part.get_content_subtype() == 'plain':
-                body_plain = decodeUnknown(part.get_content_charset(), part.get_payload(decode=True))
+                body_plain += decodeUnknown(part.get_content_charset(), part.get_payload(decode=True))
             else:
-                body_html = part.get_payload(decode=True)
+                payload = part.get_payload(decode=True)
+                if body_html:
+                    # get body and add to existing
+                    payload =  head_body_rest(payload)[1]
+                    body_html[1] += '<hr/>' + payload
+                else:
+                    # head, body, end
+                    body_html = head_body_rest(payload)
         else:
             if not name:
                 ext = mimetypes.guess_extension(part.get_content_type())
@@ -220,11 +239,11 @@ def ticket_from_message(message, queue, quiet):
         body = body_plain
     else:
         body = _('No plain-text email body available. Please see attachment email_html_body.html.')
-
     if body_html:
         files.append({
             'filename': _("email_html_body.html"),
-            'content': body_html,
+            'content': body_html[0] + '<body' + body_html[1] + '</body' +
+                       body_html[2],
             'type': 'text/html',
         })
 
