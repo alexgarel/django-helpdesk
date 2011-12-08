@@ -194,9 +194,6 @@ def ticket_from_message(message, queue, quiet):
                 parser.feed(msg)
                 attachment = MIMEMessage(parser.close())
                 fw.attach(attachment)
-                #~ fw.attach(filename='%s.eml' % mail_subject,
-                       #~ content=msg,
-                       #~ mimetype='message/rfc822; name="%s.eml"' % mail_subject)
                 fw.send(fail_silently=True)
             if ignore.keep_in_mailbox:
                 # By returning 'False' the message will be kept in the mailbox,
