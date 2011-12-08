@@ -15,6 +15,7 @@ import imaplib
 import mimetypes
 import poplib
 import re
+import os.path
 
 from datetime import datetime, timedelta
 from email.header import decode_header
@@ -236,12 +237,17 @@ def ticket_from_message(message, queue, quiet):
                     body_html = head_body_rest(payload)
         else:
             if not name:
-                ext = mimetypes.guess_extension(part.get_content_type())
-                name = "part-%i%s" % (counter, ext)
+                name = "part-%i" % counter
+
+            # add an extension if none
+            if not os.path.splitext(name)[1]:
+                ext = mimetypes.guess_extension(part.get_content_type()) or ''
+                name += ext
 
             # mark inside body that there is a file here
             body_plain += "\n[" + name + "]\n"
-            body_html += "<p>[" + name + "]</p>"
+            if body_html:
+                body_html[1] += "<p>[" + name + "]</p>"
 
             files.append({
                 'filename': name,
