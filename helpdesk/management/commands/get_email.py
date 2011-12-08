@@ -144,12 +144,25 @@ def decode_mail_headers(string):
 
 BODY_SPLITTER = re.compile(r'</?body(?= |>)')
 
-def head_body_rest(html):
+def head_body_rest(html, body_only=False):
+    """This is not a clean html splitter, it just do quick and dirty work
+    """
     splitted = BODY_SPLITTER.split(html)
+    
+    if body_only:
+        if len(splitted) == 1:
+            return splitted
+        else:
+            body = splitted[1]
+            # remove rest of body element
+            if body.find('<') > body.find('>'):
+                body = body.split('>', 1)[1]
+            return body
+
     if len(splitted) == 1:
         return '', splitted, ''
     elif len(splitted) == 2:
-        return splitted[0], splitte[1], ''
+        return splitted[0], splitted[1], ''
     else:
         return splitted
 
@@ -212,12 +225,14 @@ def ticket_from_message(message, queue, quiet):
         if (part.get_content_maintype() == 'text' and name == None and
                             part.get_content_subtype() in ('plain', 'html')):
             if part.get_content_subtype() == 'plain':
-                body_plain += decodeUnknown(part.get_content_charset(), part.get_payload(decode=True))
+                body_plain += decodeUnknown(part.get_content_charset(),
+                                            part.get_payload(decode=True))
             else:
                 payload = part.get_payload(decode=True)
                 if body_html:
                     # get body and add to existing
-                    payload =  head_body_rest(payload)[1]
+                    payload =  head_body_rest(payload, body_only=True)
+                    # further remove rest of body marker
                     body_html[1] += '<hr/>' + payload
                 else:
                     # head, body, end
