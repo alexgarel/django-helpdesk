@@ -242,6 +242,10 @@ def ticket_from_message(message, queue, quiet):
                 ext = mimetypes.guess_extension(part.get_content_type())
                 name = "part-%i%s" % (counter, ext)
 
+            # mark inside body that there is a file here
+            body_plain += "\n[" + name + "]\n"
+            body_html += "<p>[" + name + "]</p>"
+
             files.append({
                 'filename': name,
                 'content': part.get_payload(decode=True),
