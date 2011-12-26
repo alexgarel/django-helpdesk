@@ -823,7 +823,7 @@ def run_report(request, report):
     periods = []
     year, month = first_year, first_month
     working = True
-    periods.append("%s %s" % (months[month], year))
+    periods.append("%s %s" % (months[month - 1], year))
 
     while working:
         month += 1
@@ -893,7 +893,7 @@ def run_report(request, report):
 
         elif report == 'usermonth':
             metric1 = u'%s' % ticket.get_assigned_to
-            metric2 = u'%s %s' % (months[ticket.created.month], ticket.created.year)
+            metric2 = u'%s %s' % (months[ticket.created.month - 1], ticket.created.year)
 
         elif report == 'queuepriority':
             metric1 = u'%s' % ticket.queue.title
@@ -905,7 +905,7 @@ def run_report(request, report):
 
         elif report == 'queuemonth':
             metric1 = u'%s' % ticket.queue.title
-            metric2 = u'%s %s' % (months[ticket.created.month], ticket.created.year)
+            metric2 = u'%s %s' % (months[ticket.created.month - 1], ticket.created.year)
 
         summarytable[metric1, metric2] += 1
     
