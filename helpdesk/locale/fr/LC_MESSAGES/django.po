@@ -436,7 +436,7 @@ msgstr "Fermé"
 #: models.py:244 templates/helpdesk/ticket.html:90
 #: templates/helpdesk/ticket.html.py:96 templates/helpdesk/ticket.html:109
 msgid "Duplicate"
-msgstr "Dupliquer"
+msgstr "Doublon"
 
 #: models.py:248
 msgid "1. Critical"
@@ -1692,7 +1692,7 @@ msgstr ""
 
 #: templates/helpdesk/system_settings.html:11
 msgid "E-Mail Ignore list"
-msgstr "Pour les champs de la liste seulement. Entrez une option par ligne."
+msgstr "Liste des emails ignorés"
 
 #: templates/helpdesk/system_settings.html:12
 msgid "Maintain Queues"
@@ -1827,15 +1827,15 @@ msgstr ""
 "\n"
 "<h2>Ajouter Ticket CC</h2>\n"
 "\n"
-"<p>To automatically send an email to a user or e-mail address when this ticket is updated, select the user or enter an e-mail address below.</p>"
+"<p>Choisissez un utilisateur où entrez une adresse email pour que la personne correspondante re&ccedl;oive un emali chaque fois que ce ticket est mis &agrave; jour.</p>"
 
 #: templates/helpdesk/ticket_cc_add.html:21
 msgid "Save Ticket CC"
-msgstr "Enregistrer Ticket CC"
+msgstr "Enregistrer le copie à pour le ticket"
 
 #: templates/helpdesk/ticket_cc_del.html:3
 msgid "Delete Ticket CC"
-msgstr "Supprimer Ticket CC"
+msgstr "Supprimer le copie à du ticket"
 
 #: templates/helpdesk/ticket_cc_del.html:5
 #, python-format
@@ -1848,7 +1848,7 @@ msgstr ""
 "\n"
 "<h2> Supprimer Ticket CC </h2>\n"
 "\n"
-"<p> Êtes-vous sûr de vouloir supprimer cette adresse e-mail <em>( %(email_address)s )</em> de la liste CC pour ce ticket? Ils ne recevront plus les mises à jour. </p>\n"
+"<p> Êtes-vous sûr de vouloir supprimer cette adresse e-mail <em>( %(email_address)s )</em> de la liste copie à pour ce ticket? Ils ne recevront plus les mises à jour. </p>\n"
 
 #: templates/helpdesk/ticket_cc_del.html:11
 #: templates/helpdesk/ticket_dependency_del.html:11
