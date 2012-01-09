@@ -15,6 +15,8 @@ import imaplib
 import mimetypes
 import poplib
 import re
+import sys
+import traceback
 import os.path
 
 from datetime import datetime, timedelta
@@ -95,14 +97,18 @@ def process_queue(q, quiet=False):
         messagesInfo = server.list()[1]
 
         for msg in messagesInfo:
-            msgNum = msg.split(" ")[0]
-            msgSize = msg.split(" ")[1]
+            try:
+                msgNum = msg.split(" ")[0]
+                msgSize = msg.split(" ")[1]
 
-            full_message = "\n".join(server.retr(msgNum)[1])
-            ticket = ticket_from_message(message=full_message, queue=q, quiet=quiet)
+                full_message = "\n".join(server.retr(msgNum)[1])
+                ticket = ticket_from_message(message=full_message, queue=q, quiet=quiet)
 
-            if ticket:
-                server.dele(msgNum)
+                if ticket:
+                    server.dele(msgNum)
+            except Exception, e:
+                # print error, but continue
+                print >>sys.stderr, traceback.format_exc()
 
         server.quit()
 
@@ -121,10 +127,15 @@ def process_queue(q, quiet=False):
         if data:
             msgnums = data[0].split()
             for num in msgnums:
-                status, data = server.fetch(num, '(RFC822)')
-                ticket = ticket_from_message(message=data[0][1], queue=q, quiet=quiet)
-                if ticket:
-                    server.store(num, '+FLAGS', '\\Deleted')
+                try:
+                    status, data = server.fetch(num, '(RFC822)')
+                    ticket = ticket_from_message(message=data[0][1], 
+		                                 queue=q, quiet=quiet)
+                    if ticket:
+                        server.store(num, '+FLAGS', '\\Deleted')
+                except Exception, e:
+                    # print error, but continue
+                    print >>sys.stderr, traceback.format_exc()
         
         server.expunge()
         server.close()
