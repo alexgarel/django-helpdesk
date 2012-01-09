@@ -163,7 +163,7 @@ def head_body_rest(html, body_only=False):
     
     if body_only:
         if len(splitted) == 1:
-            return splitted
+            return splitted[0]
         else:
             body = splitted[1]
             # remove rest of body element
@@ -172,7 +172,7 @@ def head_body_rest(html, body_only=False):
             return body
 
     if len(splitted) == 1:
-        return '', splitted, ''
+        return '', splitted[0], ''
     elif len(splitted) == 2:
         return splitted[0], splitted[1], ''
     else:
@@ -258,6 +258,8 @@ def ticket_from_message(message, queue, quiet):
             # mark inside body that there is a file here
             body_plain += "\n[" + name + "]\n"
             if body_html:
+                if isinstance(body_html, tuple):
+                    body_html = list(body_html)
                 body_html[1] += "<p>[" + name + "]</p>"
 
             files.append({
