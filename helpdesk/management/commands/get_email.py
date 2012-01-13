@@ -152,7 +152,8 @@ def decodeUnknown(charset, string):
 
 def decode_mail_headers(string):
     decoded = decode_header(string)
-    return u' '.join([unicode(msg, charset or 'utf-8') for msg, charset in decoded])
+    return u' '.join([unicode(msg, charset or 'utf-8', replace) 
+                      for msg, charset in decoded])
 
 BODY_SPLITTER = re.compile(r'</?body(?= |>)')
 
