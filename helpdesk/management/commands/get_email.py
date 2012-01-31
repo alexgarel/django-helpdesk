@@ -151,6 +151,10 @@ def decodeUnknown(charset, string):
     return unicode(string, charset, 'replace')
 
 def decode_mail_headers(string):
+    try:
+        str(string)
+    except UnicodeEncodeError:
+        string = string.encode('ascii', 'ignore')  # fool proof
     decoded = decode_header(string)
     return u' '.join([unicode(msg, charset or 'utf-8', 'replace') 
                       for msg, charset in decoded])
