@@ -605,11 +605,12 @@ class Attachment(models.Model):
     file = models.FileField(
         _('File'),
         upload_to=attachment_path,
+        max_length=1024,
         )
 
     filename = models.CharField(
         _('Filename'),
-        max_length=100,
+        max_length=1024,
         )
 
     mime_type = models.CharField(
